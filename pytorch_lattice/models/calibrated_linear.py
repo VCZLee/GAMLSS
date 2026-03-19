@@ -126,7 +126,7 @@ class CalibratedLinear(ConstrainedModule):
     def apply_constraints(self) -> None:
         """Constrains the model into desired constraints specified by the config."""
         for calibrator in self.calibrators.values():
-            calibrator.apply_constraints()
+            calibrator.apply_constraints()  # type: ignore[operator]
         self.linear.apply_constraints()
         if self.output_calibrator:
             self.output_calibrator.apply_constraints()
@@ -152,7 +152,7 @@ class CalibratedLinear(ConstrainedModule):
         messages: dict[str, list[str]] = {}
 
         for name, calibrator in self.calibrators.items():
-            calibrator_messages = calibrator.assert_constraints(eps)
+            calibrator_messages = calibrator.assert_constraints(eps)  # type: ignore[operator]
             if calibrator_messages:
                 messages[f"{name}_calibrator"] = calibrator_messages
         linear_messages = self.linear.assert_constraints(eps)

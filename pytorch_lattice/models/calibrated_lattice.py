@@ -137,7 +137,7 @@ class CalibratedLattice(ConstrainedModule):
     def apply_constraints(self) -> None:
         """Constrains the model into desired constraints specified by the config."""
         for calibrator in self.calibrators.values():
-            calibrator.apply_constraints()
+            calibrator.apply_constraints()  # type: ignore[operator]
         self.lattice.apply_constraints()
         if self.output_calibrator:
             self.output_calibrator.apply_constraints()
@@ -161,7 +161,7 @@ class CalibratedLattice(ConstrainedModule):
         messages = {}
 
         for name, calibrator in self.calibrators.items():
-            calibrator_messages = calibrator.assert_constraints(eps)
+            calibrator_messages = calibrator.assert_constraints(eps)  # type: ignore[operator]
             if calibrator_messages:
                 messages[f"{name}_calibrator"] = calibrator_messages
         lattice_messages = self.lattice.assert_constraints(eps)

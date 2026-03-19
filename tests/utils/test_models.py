@@ -1,5 +1,6 @@
 """Tests for models utilities."""
 
+from typing import Any, cast, Optional, Union
 from unittest.mock import Mock
 
 import numpy as np
@@ -71,7 +72,7 @@ def test_initialize_feature_calibrators(
     )
 
     np.testing.assert_allclose(
-        calibrators_dict["numerical_feature"].input_keypoints,
+        cast(Any, calibrators_dict["numerical_feature"]).input_keypoints,
         num_feat.input_keypoints,
         rtol=1e-5,
     )
