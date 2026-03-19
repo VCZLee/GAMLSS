@@ -4,6 +4,7 @@ PyTorch implementation of the numerical calibration module. This module takes in
 single-dimensional input and transforms it using piece-wise linear functions that
 satisfy desired bounds and monotonicity constraints.
 """
+
 from collections import defaultdict
 from typing import Optional
 

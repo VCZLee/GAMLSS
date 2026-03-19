@@ -10,6 +10,7 @@ linear_config = CalibratedLinearConfig(feature_configs, ...)
 linear_model = CalibratedLinear(linear_config)
 ```
 """
+
 import logging
 from typing import Optional, Union
 

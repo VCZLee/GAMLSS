@@ -1,4 +1,5 @@
 """Tests for data utilities."""
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -12,7 +13,7 @@ from pytorch_lattice.utils.data import Dataset, prepare_features
     [
         (
             pd.DataFrame({"a": [1.0, 2.0, 3.0]}),
-            [NumericalFeature(feature_name="a", data=[1.0, 2.0, 3.0])],
+            [NumericalFeature(feature_name="a", data=np.array([1.0, 2.0, 3.0]))],
             pd.DataFrame({"a": [1.0, 2.0, 3.0]}),
         ),
         (
@@ -24,7 +25,9 @@ from pytorch_lattice.utils.data import Dataset, prepare_features
             pd.DataFrame({"a": [1.0, 2.0, 3.0, np.nan], "b": ["a", "b", "c", np.nan]}),
             [
                 NumericalFeature(
-                    feature_name="a", data=[1.0, 2.0, 3.0], missing_input_value=-1.0
+                    feature_name="a",
+                    data=np.array([1.0, 2.0, 3.0]),
+                    missing_input_value=-1.0
                 ),
                 CategoricalFeature(
                     feature_name="b", categories=["a", "b"], missing_input_value=-1.0

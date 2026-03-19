@@ -1,4 +1,5 @@
 """Plotting functions for PyTorch Lattice calibrated models using matplotlib."""
+
 from typing import Union
 
 import matplotlib.pyplot as plt
@@ -22,7 +23,8 @@ def calibrator(
     if feature_name not in model.calibrators:
         raise ValueError(f"Feature {feature_name} not found in model.")
 
-    calibrator = model.calibrators[feature_name]
+    from typing import Any, cast
+    calibrator: Any = model.calibrators[feature_name]
     input_keypoints = calibrator.keypoints_inputs().numpy()
     output_keypoints = calibrator.keypoints_outputs().numpy()
 

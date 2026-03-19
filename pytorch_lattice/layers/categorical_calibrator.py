@@ -4,6 +4,7 @@ PyTorch implementation of the categorical calibration module. This module takes 
 single-dimensional input of categories represented as indices and transforms it by
 mapping a given category to its learned output value.
 """
+
 from collections import defaultdict
 from typing import Optional
 

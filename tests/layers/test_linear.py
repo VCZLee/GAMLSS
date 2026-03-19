@@ -1,4 +1,5 @@
 """Tests for Linear module."""
+
 import numpy as np
 import pytest
 import torch

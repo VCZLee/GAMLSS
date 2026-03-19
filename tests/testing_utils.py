@@ -1,4 +1,5 @@
 """Testing Utilities."""
+
 import torch
 
 from pytorch_lattice.constrained_module import ConstrainedModule

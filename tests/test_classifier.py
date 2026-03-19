@@ -1,4 +1,5 @@
 """Tests for the `Classifier` class."""
+
 import numpy as np
 import pandas as pd
 import pytest

@@ -4,6 +4,7 @@ PyTorch implementation of the calibrated linear module. This module takes in a
 single-dimensional input and transforms it using a linear transformation and optionally
 a bias term. This module supports monotonicity constraints.
 """
+
 from typing import Optional
 
 import torch

@@ -1,4 +1,5 @@
 """Model configurations classes for PyTorch Calibrated Models."""
+
 from dataclasses import dataclass
 from typing import Optional
 

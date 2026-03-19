@@ -1,4 +1,5 @@
 """Utility functions and classes for handling data."""
+
 from typing import Union
 
 import numpy as np
