@@ -16,6 +16,10 @@ A PyTorch implementation of lattice modeling techniques, focusing on interpretab
 
 This project uses **uv** for dependency management.
 
+### Environment Management
+- **uv**: All dependencies and virtual environments are managed by `uv`. Use `uv sync` to install and `uv run <command>` to execute within the environment.
+- **Python Version**: Target Python version is 3.12.
+
 ### Setup
 ```powershell
 # Install dependencies
@@ -25,12 +29,18 @@ uv sync
 uv run pytest
 ```
 
+## Source Control and Branches
+
+- **main**: The primary development branch.
+- **gh-pages**: Automatically managed by GitHub Actions (`docs.yml`) for hosting documentation. Do not manually merge into or modify this branch.
+- **Feature Branches**: Use descriptive names (e.g., `feat/`, `fix/`, `chore/`).
+
 ### Key Commands
 - **Testing**: `pytest`
 - **Linting**: `ruff check .`
 - **Formatting**: `ruff format .`
 - **Type Checking**: `mypy .`
-- **Documentation**: `mkdocs serve`
+- **Documentation**: `mkdocs serve` or `mkdocs build`
 
 ## Development Conventions
 
