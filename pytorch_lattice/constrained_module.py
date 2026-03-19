@@ -1,4 +1,5 @@
 """A virtual base class for constrained modules."""
+
 from abc import abstractmethod
 from typing import Union
 

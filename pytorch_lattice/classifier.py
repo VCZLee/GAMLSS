@@ -1,4 +1,5 @@
 """A class for training classifiers on tabular data using calibrated models."""
+
 from __future__ import annotations
 
 import os
@@ -162,7 +163,7 @@ class Classifier:
 
         model_path = os.path.join(filepath, "model.pt")
         if os.path.exists(model_path):
-            clf.model = torch.load(model_path)
+            clf.model = torch.load(model_path, weights_only=False)
 
         return clf
 

@@ -10,19 +10,19 @@ A PyTorch implementation of lattice modeling techniques, focusing on interpretab
   - `FeatureConfig`: Configuration for individual features (keypoints, monotonicity, etc.).
   - `Layers`: Custom PyTorch layers for numerical/categorical calibration and lattice interpolation.
   - `Models`: `CalibratedLinear` and `CalibratedLattice` which compose calibrators and a linear/lattice layer.
-- **Main Technologies**: PyTorch, Pandas, NumPy, Matplotlib, Pydantic, Poetry.
+- **Main Technologies**: PyTorch, Pandas, NumPy, Matplotlib, Pydantic, uv.
 
 ## Building and Running
 
-This project uses **Poetry** for dependency management.
+This project uses **uv** for dependency management.
 
 ### Setup
 ```powershell
 # Install dependencies
-poetry install
+uv sync
 
-# Activate virtual environment
-poetry shell
+# Run tests or commands within environment
+uv run pytest
 ```
 
 ### Key Commands

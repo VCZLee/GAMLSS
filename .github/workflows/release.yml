@@ -20,15 +20,14 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1.3.1
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: "true"
-
-      - name: Get Release Version
-        run: echo "RELEASE_VERSION=$(poetry version | awk '{print $2}')" >> $GITHUB_ENV
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
 
       - name: Build And Publish Python Package
-        run: poetry publish --build
+        run: |
+          uv build
+          uv publish
         env:
-          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_PYTORCH_LATTICE_RELEASE_TOKEN }}
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_PYTORCH_LATTICE_RELEASE_TOKEN }}

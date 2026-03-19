@@ -1,4 +1,5 @@
 """Tests for calibrated lattice model."""
+
 from unittest.mock import Mock, patch
 
 import numpy as np

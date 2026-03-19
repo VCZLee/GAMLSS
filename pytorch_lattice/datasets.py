@@ -1,4 +1,5 @@
 """Functions for loading datasets to use with the PyTorch Lattice package."""
+
 import numpy as np
 import pandas as pd
 

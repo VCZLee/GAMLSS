@@ -1,4 +1,5 @@
 """Utility functions for use in model classes."""
+
 from typing import Optional, Union
 
 import numpy as np

@@ -1,4 +1,5 @@
 """Tests for configuration objects."""
+
 import numpy as np
 import pytest
 

@@ -9,8 +9,8 @@ To install a specific version of python, you can run e.g. `pyenv install 3.10.9`
 ```sh
 pyenv virtualenv {python_version} env-name
 pyenv activate env-name
-pip install poetry
-poetry install
+pip install uv
+uv sync
 ```
 
 If you'd prefer, you can also use conda to manage your python versions and environments. For installing conda, see their [installation guide](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
@@ -18,9 +18,9 @@ If you'd prefer, you can also use conda to manage your python versions and envir
 The following code is an example of how to set up such an environment:
 
 ```sh
-conda create -n env-name pip poetry python={python_version}
+conda create -n env-name pip uv python={python_version}
 conda activate env-name
-poetry install
+uv sync
 ```
 
 Make sure to replace `{python_version}` in the above snippets with the version you want the environment to use (e.g. 3.10.9) and name the environment accordingly (e.g. env-name-3.10).
@@ -67,14 +67,14 @@ Make sure to replace `{python_version}` in the above snippets with the version y
     -   Format your code!
 
     ```shell
-    poetry run ruff format .
+    uv run ruff format .
     ```
 
     -   Lint and test your code! From the base directory, run:
 
     ```shell
-    poetry run ruff check .
-    poetry run mypy .
+    uv run ruff check .
+    uv run mypy .
     ```
 
 4.  Contributions are submitted through [GitHub Pull Requests](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)

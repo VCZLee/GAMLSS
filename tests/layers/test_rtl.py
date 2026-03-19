@@ -1,4 +1,5 @@
 """Tests for RTL layer."""
+
 from itertools import cycle
 from unittest.mock import Mock, patch
 

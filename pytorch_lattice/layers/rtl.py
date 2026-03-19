@@ -5,6 +5,7 @@ inputs. It utilizes the multi-unit functionality of the Lattice module to better
 optimize speed performance by putting feature subsets that have the same constraint
 structure into the same Lattice module as multiple units.
 """
+
 import logging
 from typing import Optional, Union
 
@@ -119,7 +120,7 @@ class RTL(torch.nn.Module):
             for i, lattice_indices in enumerate(groups):
                 sorted_indices = sorted(
                     lattice_indices,
-                    key=lambda x: (self.monotonicities[x] is None),
+                    key=lambda x: self.monotonicities[x] is None,
                     reverse=False,
                 )
                 groups[i] = sorted_indices

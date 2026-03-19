@@ -1,34 +1,39 @@
-[tool.poetry]
+[project]
 name = "pytorch-lattice"
 version = "0.2.0"
 description = "A PyTorch Implementation Of Lattice Modeling Techniques"
-license = "MIT"
-authors = ["William Bakst <william@mirascope.io>"]
+license = { text = "MIT" }
+authors = [{ name = "William Bakst", email = "william@mirascope.io" }]
 readme = "docs/README.md"
-packages = [{ include = "pytorch_lattice" }]
-repository = "https://github.com/willbakst/pytorch-lattice"
+requires-python = ">=3.9, <3.13"
+dependencies = [
+    "matplotlib>=3.7.1",
+    "numpy>=1.23.5",
+    "pandas>=2.0.2",
+    "pydantic>=2.0.2",
+    "torch>=2.0.0, !=2.0.1, !=2.1.0",
+    "tqdm>=4.65.0"
+]
 
-[tool.poetry.dependencies]
-python = ">=3.9, <3.13"
+[project.urls]
+Repository = "https://github.com/willbakst/pytorch-lattice"
 
-matplotlib = "^3.7.1"
-numpy = "^1.23.5"
-pandas = "^2.0.2"
-pydantic = "^2.0.2"
-torch = ">=2.0.0, !=2.0.1, !=2.1.0"
-tqdm = "^4.65.0"
+[dependency-groups]
+dev = [
+    "jupyter>=1.0.0",
+    "mkdocs>=1.4.3",
+    "mkdocs-material>=9.1.18",
+    "mkdocstrings>=0.22.0",
+    "mkdocstrings-python>=1.1.2",
+    "mypy>=1.6.1",
+    "pytest>=7.4.0",
+    "ruff>=0.1.5",
+    "pandas-stubs>=2.1.1.230928",
+    "types-tqdm>=4.66.0.4"
+]
 
-[tool.poetry.group.dev.dependencies]
-jupyter = "^1.0.0"
-mkdocs = "^1.4.3"
-mkdocs-material = "^9.1.18"
-mkdocstrings = "^0.22.0"
-mkdocstrings-python = "^1.1.2"
-mypy = "^1.6.1"
-pytest = "^7.4.0"
-ruff = "^0.1.5"
-pandas-stubs = "^2.1.1.230928"
-types-tqdm = "^4.66.0.4"
+[tool.hatch.build.targets.wheel]
+packages = ["pytorch_lattice"]
 
 [tool.ruff]
 exclude = [
@@ -77,5 +82,5 @@ line-ending = "auto"
 exclude = ["examples", "venv"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

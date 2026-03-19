@@ -1,4 +1,5 @@
 """Class for easily constructing a calibrated linear model."""
+
 from typing import Optional, Union
 
 import torch

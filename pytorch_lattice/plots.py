@@ -1,4 +1,5 @@
 """Plotting functions for PyTorch Lattice calibrated models using matplotlib."""
+
 from typing import Union
 
 import matplotlib.pyplot as plt

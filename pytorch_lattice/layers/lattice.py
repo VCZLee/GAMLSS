@@ -4,6 +4,7 @@ PyTorch implementation of a lattice layer.
 This layer takes one or more d-dimensional inputs and outputs the interpolated value
 according the specified interpolation method.
 """
+
 from typing import Callable, Iterator, Optional, Union, overload
 
 import numpy as np
@@ -500,14 +501,12 @@ class Lattice(ConstrainedModule):
         return result
 
     @overload
-    def _clip_onto_lattice_range(self, inputs: torch.Tensor) -> torch.Tensor:
-        ...
+    def _clip_onto_lattice_range(self, inputs: torch.Tensor) -> torch.Tensor: ...
 
     @overload
     def _clip_onto_lattice_range(
         self, inputs: list[torch.Tensor]
-    ) -> list[torch.Tensor]:
-        ...
+    ) -> list[torch.Tensor]: ...
 
     def _clip_onto_lattice_range(
         self,
@@ -575,7 +574,9 @@ class Lattice(ConstrainedModule):
                     current_size += 1
             bucket_sizes.append(current_size)
             bucket_dim_sizes.append(self.lattice_sizes[-1])
-            inputs = list(torch.split(inputs, split_size_or_sections=bucket_sizes, dim=-1))
+            inputs = list(
+                torch.split(inputs, split_size_or_sections=bucket_sizes, dim=-1)
+            )
         else:
             bucket_sizes = [1] * len(self.lattice_sizes)
             bucket_dim_sizes = self.lattice_sizes

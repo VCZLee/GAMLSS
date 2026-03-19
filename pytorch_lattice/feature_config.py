@@ -1,4 +1,5 @@
 """Configuration objects for the PyTorch Lattice library."""
+
 from __future__ import annotations
 
 from typing import Optional, Union
