@@ -29,6 +29,12 @@ uv sync
 uv run pytest
 ```
 
+### PowerShell Support
+When using PowerShell 5.1 (default on Windows), do not use the `&&` operator to chain commands. Instead, use `;` as a statement separator:
+```powershell
+uv sync; uv run pytest
+```
+
 ## Source Control and Branches
 
 - **main**: The primary development branch.
