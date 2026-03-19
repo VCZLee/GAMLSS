@@ -1,7 +1,12 @@
 .pytest_cache
 **__pycache__
 .ipynb_checkpoints
+
+# IDEs and Editors
 .idea/
+*.iml
+*.iws
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

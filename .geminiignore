@@ -11,3 +11,11 @@ __pycache__/
 *.pyd
 .git/
 uv.lock
+
+# PyCharm
+*.iml
+*.iws
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
