@@ -27,7 +27,7 @@ from pytorch_lattice.utils.data import Dataset, prepare_features
                 NumericalFeature(
                     feature_name="a",
                     data=np.array([1.0, 2.0, 3.0]),
-                    missing_input_value=-1.0
+                    missing_input_value=-1.0,
                 ),
                 CategoricalFeature(
                     feature_name="b", categories=["a", "b"], missing_input_value=-1.0

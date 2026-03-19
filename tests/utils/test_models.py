@@ -1,6 +1,6 @@
 """Tests for models utilities."""
 
-from typing import Any, cast, Optional, Union
+from typing import Any, cast
 from unittest.mock import Mock
 
 import numpy as np
