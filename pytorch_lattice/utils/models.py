@@ -64,7 +64,7 @@ def initialize_feature_calibrators(
 
 
 def initialize_monotonicities(
-    features: list[Union[NumericalFeature, CategoricalFeature]]
+    features: list[Union[NumericalFeature, CategoricalFeature]],
 ) -> list[Optional[Monotonicity]]:
     """Helper function to initialize monotonicities for calibrated model.
 
