@@ -575,7 +575,7 @@ class Lattice(ConstrainedModule):
                     current_size += 1
             bucket_sizes.append(current_size)
             bucket_dim_sizes.append(self.lattice_sizes[-1])
-            inputs = torch.split(inputs, split_size_or_sections=bucket_sizes, dim=-1)
+            inputs = list(torch.split(inputs, split_size_or_sections=bucket_sizes, dim=-1))
         else:
             bucket_sizes = [1] * len(self.lattice_sizes)
             bucket_dim_sizes = self.lattice_sizes
