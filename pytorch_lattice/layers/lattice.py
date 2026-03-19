@@ -501,12 +501,14 @@ class Lattice(ConstrainedModule):
         return result
 
     @overload
-    def _clip_onto_lattice_range(self, inputs: torch.Tensor) -> torch.Tensor: ...
+    def _clip_onto_lattice_range(self, inputs: torch.Tensor) -> torch.Tensor:
+        ...
 
     @overload
     def _clip_onto_lattice_range(
         self, inputs: list[torch.Tensor]
-    ) -> list[torch.Tensor]: ...
+    ) -> list[torch.Tensor]:
+        ...
 
     def _clip_onto_lattice_range(
         self,
