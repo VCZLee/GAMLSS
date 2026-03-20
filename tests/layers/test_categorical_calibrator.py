@@ -427,6 +427,8 @@ def test_approximately_project_monotonicity_pairs(
 
 def test_training():
     """Tests that the `CategoricalCalibrator` module can learn a mapping."""
+    torch.manual_seed(42)
+    np.random.seed(42)
     num_categories, num_examples_per_category = 5, 200
     training_examples = np.concatenate(
         [[c] * num_examples_per_category for c in range(num_categories)]

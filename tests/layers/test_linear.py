@@ -296,6 +296,8 @@ def test_constrain_weighted_average(
 
 def test_training() -> None:
     """Tests that the `Linear` module can learn f(x_1,x_2) = 2x_1 + 3x_2"""
+    torch.manual_seed(42)
+    np.random.seed(42)
     num_examples = 1000
     input_min, input_max = 0.0, 10.0
     training_examples = torch.from_numpy(

@@ -866,6 +866,8 @@ def test_squeeze_by_scaling(
 
 def test_training():
     """Tests that the `NumericalCalibrator` module can learn f(x) = |x|."""
+    torch.manual_seed(42)
+    np.random.seed(42)
     num_examples = 1000
     output_min, output_max = 0.0, 2.0
     training_examples = torch.from_numpy(
@@ -907,6 +909,8 @@ def test_training_learned_interior_input_keypoints():
     initialized with inaccurate interior keypoints [0.1, 0.9] and then tested to see if
     it can learn the ideal interior keypoint positions of [0.33, 0.66].
     """
+    torch.manual_seed(42)
+    np.random.seed(42)
     num_examples = 1000
     output_min, output_max = 0.0, 1.0
     training_examples = torch.linspace(output_min, output_max, num_examples)[

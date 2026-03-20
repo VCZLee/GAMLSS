@@ -34,6 +34,7 @@ def test_configure():
 @pytest.fixture(name="X")
 def fixture_data():
     """Randomized training data for fitting a classifier."""
+    np.random.seed(42)
     return pd.DataFrame(
         {
             "numerical": np.random.rand(100),
@@ -45,6 +46,7 @@ def fixture_data():
 @pytest.fixture(name="y")
 def fixture_labels(X):
     """Randomized training labels for fitting a classifier."""
+    np.random.seed(42)
     return np.random.randint(0, 2, len(X))
 
 

@@ -198,6 +198,8 @@ def test_forward():
 )
 def test_training(interpolation, lattice_dim):
     """Tests `CalibratedLattice` training on data from f(x) = 0.7|x_1| + 0.3x_2."""
+    torch.manual_seed(42)
+    np.random.seed(42)
     num_examples, num_categories = 3000, 3
     output_min, output_max = 0.0, num_categories - 1
     x_1_numpy = np.random.uniform(-output_max, output_max, size=num_examples)
