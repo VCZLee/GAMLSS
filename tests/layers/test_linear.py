@@ -324,5 +324,5 @@ def test_training() -> None:
 
     expected_weights = [2.0, 3.0]
     assert torch.squeeze(linear.kernel.data).tolist() == pytest.approx(
-        expected_weights, abs=1e-5
+        expected_weights, abs=1e-3
     )

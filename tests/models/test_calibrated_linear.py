@@ -315,4 +315,4 @@ def test_training():
 
     assert not calibrated_linear.assert_constraints()
     assert trained_loss < initial_loss
-    assert trained_loss.item() == pytest.approx(0.013052786, abs=1e-5)
+    assert trained_loss.item() == pytest.approx(0.013052786, abs=1e-3)

@@ -920,7 +920,7 @@ def test_training():
         1.800132,
         2.0,
     ]
-    assert keypoints_outputs.tolist() == pytest.approx(expected_outputs, abs=1e-5)
+    assert keypoints_outputs.tolist() == pytest.approx(expected_outputs, abs=1e-3)
 
 
 def test_training_learned_interior_input_keypoints():

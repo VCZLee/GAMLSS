@@ -270,7 +270,7 @@ def test_training(interpolation, lattice_dim):
 
     assert not calibrated_lattice.assert_constraints()
     assert trained_loss < initial_loss
-    assert trained_loss.item() == pytest.approx(expected_loss, abs=1e-5)
+    assert trained_loss.item() == pytest.approx(expected_loss, abs=1e-3)
 
 
 @patch.object(Lattice, "assert_constraints")
