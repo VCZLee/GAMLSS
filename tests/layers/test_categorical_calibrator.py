@@ -459,6 +459,6 @@ def test_training():
         num_examples // 10,
     )
 
-    keypoints_inputs = calibrator.keypoints_inputs()
     keypoints_outputs = calibrator.keypoints_outputs()
-    assert torch.allclose(keypoints_inputs.double(), keypoints_outputs, atol=2e-2)
+    expected_outputs = [0.0, 1.0, 2.0, 3.0, 4.0]
+    assert keypoints_outputs.tolist() == pytest.approx(expected_outputs, abs=1e-5)

@@ -258,10 +258,19 @@ def test_training(interpolation, lattice_dim):
         trained_predictions = calibrated_lattice(training_examples)
         trained_loss = loss_fn(trained_predictions, training_labels)
 
-    # calibrated_lattice.apply_constraints()
+    expected_losses = {
+        (Interpolation.HYPERCUBE, 2): 0.012719382,
+        (Interpolation.HYPERCUBE, 3): 1.548515542e-06,
+        (Interpolation.HYPERCUBE, 4): 0.002605192,
+        (Interpolation.SIMPLEX, 2): 0.013119394,
+        (Interpolation.SIMPLEX, 3): 7.671624852e-07,
+        (Interpolation.SIMPLEX, 4): 0.002517211,
+    }
+    expected_loss = expected_losses[(interpolation, lattice_dim)]
+
     assert not calibrated_lattice.assert_constraints()
     assert trained_loss < initial_loss
-    assert trained_loss < 0.08
+    assert trained_loss.item() == pytest.approx(expected_loss, abs=1e-5)
 
 
 @patch.object(Lattice, "assert_constraints")

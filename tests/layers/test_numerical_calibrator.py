@@ -895,11 +895,32 @@ def test_training():
         num_examples // 10,
     )
 
-    keypoints_inputs = calibrator.keypoints_inputs()
     keypoints_outputs = calibrator.keypoints_outputs()
-    assert torch.allclose(
-        torch.absolute(keypoints_inputs), keypoints_outputs, atol=2e-2
-    )
+
+    expected_outputs = [
+        1.998765,
+        1.800671,
+        1.599781,
+        1.400111,
+        1.199992,
+        1.000058,
+        0.800034,
+        0.600054,
+        0.400065,
+        0.200033,
+        0.000135,
+        0.200042,
+        0.400083,
+        0.600092,
+        0.800090,
+        1.000073,
+        1.200083,
+        1.400104,
+        1.600098,
+        1.800132,
+        2.0,
+    ]
+    assert keypoints_outputs.tolist() == pytest.approx(expected_outputs, abs=1e-5)
 
 
 def test_training_learned_interior_input_keypoints():
@@ -950,8 +971,7 @@ def test_training_learned_interior_input_keypoints():
     )
 
     # Test that the learned keypoints roughly match the expected ones
-    assert torch.allclose(
-        calibrator._interpolation_keypoints,
-        torch.tensor([0, 1 / 3, 2 / 3]).double(),
-        atol=0.02,
+    expected_keypoints = [0.0, 0.337377, 0.669678]
+    assert calibrator._interpolation_keypoints.tolist() == pytest.approx(
+        expected_keypoints, abs=1e-5
     )
