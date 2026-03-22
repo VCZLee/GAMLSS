@@ -55,6 +55,7 @@ uv sync; uv run pytest
 - **Testing**: Uses `pytest`. Tests are located in the `tests/` directory and follow a structure mirroring the source code.
 - **Documentation**: Uses `mkdocs` with the `material` theme and `mkdocstrings` for API documentation.
 - **Constraints**: Constraints (like monotonicity) are applied after each optimization step using `model.apply_constraints()`.
+- **Jupyter Notebooks**: Only read `.ipynb` files when strictly necessary. Convert the notebook to a temporary text file (e.g., using `jupyter nbconvert --to python`) before reading, lowering context bloat, and delete the temporary file immediately after.
 
 ## Directory Structure
 
@@ -64,4 +65,5 @@ uv sync; uv run pytest
   - `utils/`: Data processing and model utility functions.
 - `tests/`: Comprehensive test suite.
 - `examples/`: Example scripts demonstrating library usage.
+- `notebooks/`: Jupyter notebooks for data exploration and research.
 - `docs/`: Source files for documentation.
