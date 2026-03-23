@@ -6,10 +6,24 @@ A PyTorch implementation of lattice modeling techniques, focusing on interpretab
 
 - **Purpose**: To provide a library for building and training calibrated models (linear or lattice-based) with domain-knowledge constraints. This library is a partial port of TensorFlow Lattice to PyTorch.
 - **GAMLSS Goal**: This fork is specifically used to help create a **GAMLSS (Generalized Additive Models for Location, Scale, and Shape)** implementation in Python. The objective is a GAMLSS model where each term is a function (either a PWL/numeric calibration or a categorical calibration) of an input variable.
-- **Context & Terminology**:
-  - **TensorFlow Lattice Port**: As this is a port, references to "TensorFlow" in general should be understood as referring to TensorFlow or, more specifically, TensorFlow Lattice.
-  - **PWL / PWL Calibrator**: References to "PWL" or "PWL Calibrator" (Piecewise Linear) should be interpreted as TensorFlow Lattice's implementation of the numeric calibrator.
-- **Core Architecture**:
+
+## Porting Reference & Mappings
+
+To aid in porting, original TensorFlow Lattice (TFL) source files are stored in the `reference/` directory.
+
+### Concept Mappings
+
+| TensorFlow Lattice (TFL) | PyTorch Lattice (PTL) | Description |
+| :--- | :--- | :--- |
+| `pwl_calibration_layer.py` | `numerical_calibrator.py` | PWL/Numeric calibration layer. |
+| `categorical_calibration_layer.py` | `categorical_calibrator.py` | Categorical calibration layer. |
+
+### Key Reference Files
+- **PWL/Numeric Calibration**: `reference/pwl_calibration_layer.py`
+- **Categorical Calibration**: `reference/categorical_calibration_layer.py`
+- **Tests**: `reference/pwl_calibration_test.py`, `reference/categorical_calibration_test.py`
+
+## Core Architecture
   - `FeatureConfig`: Configuration for individual features (keypoints, monotonicity, etc.).
   - `Layers`: Custom PyTorch layers for numerical/categorical calibration and lattice interpolation.
   - `Models`: High-level GAMLSS-focused model architectures (in development).
@@ -41,8 +55,9 @@ uv sync; uv run pytest
 ## Source Control and Branches
 
 - **main**: The primary development branch.
+- **ci/cd-config**: Dedicated to "housekeeping" tasks. This includes CI/CD workflows, project-wide system configurations, and general documentation. Prefer pushing these changes here—even if discovered while working on another branch—unless doing so adds significant complexity or risk.
 - **gh-pages**: Automatically managed by GitHub Actions (`docs.yml`) for hosting documentation. Do not manually merge into or modify this branch.
-- **Feature Branches**: Use descriptive names (e.g., `feat/`, `fix/`, `chore/`).
+- **Feature Branches**: Use descriptive names (e.g., `feat/`, `fix/`). **Feature branches must include both the implementation code and the corresponding tests required for verification.**
 
 ### Key Commands
 - **Testing**: `pytest`
