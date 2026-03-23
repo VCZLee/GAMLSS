@@ -4,12 +4,15 @@ A PyTorch implementation of lattice modeling techniques, focusing on interpretab
 
 ## Project Overview
 
-- **Purpose**: To provide a library for building and training calibrated models (linear or lattice-based) with domain-knowledge constraints.
+- **Purpose**: To provide a library for building and training calibrated models (linear or lattice-based) with domain-knowledge constraints. This library is a partial port of TensorFlow Lattice to PyTorch.
+- **GAMLSS Goal**: This fork is specifically used to help create a **GAMLSS (Generalized Additive Models for Location, Scale, and Shape)** implementation in Python. The objective is a GAMLSS model where each term is a function (either a PWL/numeric calibration or a categorical calibration) of an input variable.
+- **Context & Terminology**:
+  - **TensorFlow Lattice Port**: As this is a port, references to "TensorFlow" in general should be understood as referring to TensorFlow or, more specifically, TensorFlow Lattice.
+  - **PWL / PWL Calibrator**: References to "PWL" or "PWL Calibrator" (Piecewise Linear) should be interpreted as TensorFlow Lattice's implementation of the numeric calibrator.
 - **Core Architecture**:
-  - `Classifier`: High-level API for training models on tabular data.
   - `FeatureConfig`: Configuration for individual features (keypoints, monotonicity, etc.).
   - `Layers`: Custom PyTorch layers for numerical/categorical calibration and lattice interpolation.
-  - `Models`: `CalibratedLinear` and `CalibratedLattice` which compose calibrators and a linear/lattice layer.
+  - `Models`: High-level GAMLSS-focused model architectures (in development).
 - **Main Technologies**: PyTorch, Pandas, NumPy, Matplotlib, Pydantic, uv.
 
 ## Building and Running
@@ -55,6 +58,7 @@ uv sync; uv run pytest
 - **Testing**: Uses `pytest`. Tests are located in the `tests/` directory and follow a structure mirroring the source code.
 - **Documentation**: Uses `mkdocs` with the `material` theme and `mkdocstrings` for API documentation.
 - **Constraints**: Constraints (like monotonicity) are applied after each optimization step using `model.apply_constraints()`.
+- **Jupyter Notebooks**: Only read `.ipynb` files when strictly necessary. Convert the notebook to a temporary text file (e.g., using `jupyter nbconvert --to python`) before reading, lowering context bloat, and delete the temporary file immediately after.
 
 ## Directory Structure
 
@@ -64,4 +68,5 @@ uv sync; uv run pytest
   - `utils/`: Data processing and model utility functions.
 - `tests/`: Comprehensive test suite.
 - `examples/`: Example scripts demonstrating library usage.
+- `notebooks/`: Jupyter notebooks for data exploration and research.
 - `docs/`: Source files for documentation.

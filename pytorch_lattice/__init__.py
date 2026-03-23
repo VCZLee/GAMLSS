@@ -6,7 +6,6 @@
 __version__ = "0.2.0"
 
 from . import datasets, plots, utils
-from .classifier import Classifier
 from .enums import (
     CategoricalCalibratorInit,
     InputKeypointsInit,
@@ -16,5 +15,3 @@ from .enums import (
     Monotonicity,
     NumericalCalibratorInit,
 )
-from .feature_config import FeatureConfig
-from .model_configs import LatticeConfig, LinearConfig
