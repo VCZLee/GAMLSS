@@ -21,3 +21,10 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
+
+      - id: mkdocs-build
+        name: mkdocs-build
+        entry: uv run mkdocs build
+        language: system
+        always_run: true
+        pass_filenames: false
