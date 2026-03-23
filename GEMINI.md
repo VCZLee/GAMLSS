@@ -4,7 +4,7 @@ A PyTorch implementation of lattice modeling techniques, focusing on interpretab
 
 ## Project Overview
 
-- **Purpose**: To provide a library for building and training calibrated models (linear or lattice-based) with domain-knowledge constraints.
+- **Purpose**: To provide a library for building and training calibrated models (linear or lattice-based) with domain-knowledge constraints. This library is a partial port of TensorFlow Lattice to PyTorch.
 - **Core Architecture**:
   - `Classifier`: High-level API for training models on tabular data.
   - `FeatureConfig`: Configuration for individual features (keypoints, monotonicity, etc.).
