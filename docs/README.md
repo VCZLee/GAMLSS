@@ -4,7 +4,6 @@ A PyTorch implementation of constrained optimization and modeling techniques
 
 - **Transparent Models**: Glassbox models to provide increased interpretability and insights into your ML models.
 - **Shape Constraints**: Embed domain knowledge directly into the model through feature constraints.
-- **Rate Constraints (Coming soon...)**: Optimize any PyTorch model under a set of constraints on rates (e.g. FPR < 1%). Rates can be calculated both for the entire dataset as well as specific slices.
 
 ---
 
