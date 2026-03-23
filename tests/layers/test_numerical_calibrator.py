@@ -975,3 +975,75 @@ def test_training_learned_interior_input_keypoints():
     assert calibrator._interpolation_keypoints.tolist() == pytest.approx(
         expected_keypoints, abs=1e-5
     )
+
+
+def test_initialization_cyclic():
+    """Tests that NumericalCalibrator class initialization works with is_cyclic=True."""
+    input_keypoints = np.linspace(0.0, 24.0, num=5)
+    calibrator = NumericalCalibrator(
+        input_keypoints,
+        is_cyclic=True,
+    )
+
+    assert calibrator.is_cyclic is True
+    # For 5 keypoints, and is_cyclic=True, kernel should have 1 (bias) + 3 (heights) = 4 rows.
+    # The 4th height is implicit.
+    assert calibrator.kernel.shape == (4, 1)
+
+
+def test_forward_cyclic():
+    """Tests that forward pass is cyclic (first and last keypoints give same output)."""
+    input_keypoints = np.linspace(0.0, 24.0, num=5)
+    calibrator = NumericalCalibrator(
+        input_keypoints,
+        is_cyclic=True,
+    )
+
+    # Manually set kernel to something known
+    # bias=1.0, h1=0.5, h2=0.2, h3=-0.1
+    # Implicit h4 = -(0.5 + 0.2 - 0.1) = -0.6
+    calibrator.kernel.data = torch.tensor([[1.0], [0.5], [0.2], [-0.1]]).double()
+
+    inputs = torch.tensor([[0.0], [24.0]]).double()
+    outputs = calibrator(inputs)
+
+    assert torch.allclose(outputs[0], outputs[1])
+    assert torch.allclose(outputs[0], torch.tensor([1.0]).double())
+
+
+def test_apply_constraints_cyclic():
+    """Tests that apply_constraints works with is_cyclic=True (bounds only)."""
+    input_keypoints = np.linspace(0.0, 4.0, num=5)
+    calibrator = NumericalCalibrator(
+        input_keypoints,
+        is_cyclic=True,
+        output_min=0.0,
+        output_max=1.0,
+    )
+
+    # bias=2.0, h1=-0.5, h2=-0.5, h3=-0.5
+    # Implicit h4 = 1.5
+    # Outputs: 2.0, 1.5, 1.0, 0.5, 2.0
+    # All are out of bounds [0, 1] except 1.0 and 0.5.
+    calibrator.kernel.data = torch.tensor([[2.0], [-0.5], [-0.5], [-0.5]]).double()
+
+    calibrator.apply_constraints()
+
+    keypoints_outputs = calibrator.keypoints_outputs()
+    assert torch.all(keypoints_outputs >= 0.0)
+    assert torch.all(keypoints_outputs <= 1.0)
+    # The first and last outputs should still be equal
+    assert torch.allclose(keypoints_outputs[0], keypoints_outputs[-1])
+
+
+def test_is_cyclic_monotonicity_exclusive():
+    """Tests that is_cyclic and monotonicity are mutually exclusive."""
+    input_keypoints = np.linspace(0.0, 4.0, num=5)
+    with pytest.raises(
+        ValueError, match="is_cyclic cannot be True if monotonicity is set."
+    ):
+        NumericalCalibrator(
+            input_keypoints,
+            is_cyclic=True,
+            monotonicity=Monotonicity.INCREASING,
+        )

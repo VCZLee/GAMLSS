@@ -60,6 +60,8 @@ exclude = [
     "dist",
     "node_modules",
     "venv",
+    "reference",
+    "site",
 ]
 line-length = 88
 target-version = "py38"
@@ -81,7 +83,10 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.mypy]
-exclude = ["examples", "venv"]
+exclude = ["examples", "venv", "reference", "site"]
+
+[tool.pytest.ini_options]
+norecursedirs = ["reference", "site"]
 
 [build-system]
 requires = ["hatchling"]

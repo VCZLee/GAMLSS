@@ -84,6 +84,13 @@ def test_numerical_feature_config_initialization(
     assert np.allclose(feature.input_keypoints, expected_input_keypoints)
 
 
+def test_numerical_feature_config_is_cyclic():
+    """Tests that is_cyclic is properly set in NumericalFeature."""
+    data = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+    feature = NumericalFeature("test", data, is_cyclic=True)
+    assert feature.is_cyclic is True
+
+
 @pytest.mark.parametrize(
     "categories,missing_input_value,monotonicity_pairs,expected_category_indices,"
     "expected_monotonicity_index_pairs",
