@@ -29,38 +29,7 @@ $ pip install pytorch-lattice
 
 ## Quickstart
 
-### Step 1. Import the package
-
-First, import the PyTorch Lattice library:
-
-```py
-import pytorch_lattice as pyl
-```
-
-### Step 2. Load data and fit a classifier
-
-Load the UCI Statlog (Heart) dataset. Then create a base classifier and fit it to the data. Creating the base classifier requires only the feature names.
-
-```py
-X, y = pyl.datasets.heart()
-clf = pyl.Classifier(X.columns).fit(X, y)
-```
-
-### Step 3. Plot a feature calibrator
-
-Now that you've trained a classifier, you can plot the feature calibrators to better understand how the model is understanding each feature.
-
-```py
-pyl.plots.calibrator(clf.model, "thal")
-```
-
-![Thal Calibrator](img/thal_calibrator.png)
-
-### Step 4. What's Next?
-
--   Check out the [Concepts](concepts/classifier.md) section to dive deeper into the library and the core features that make it powerful, such as [calibrators](concepts/calibrators.md) and [shape constraints](concepts/shape_constraints.md).
--   You can follow along with more detailed [walkthroughs](walkthroughs/uci_adult_income.md) to get a better understanding of how to utilize the library to effectively model your data. You can also take a look at [code examples](https://github.com/ControlAI/pytorch-lattice/tree/main/examples) in the repo.
--   The [API Reference](api/layers.md) contains full details on all classes, methods, functions, etc.
+*GAMLSS implementation in progress. Check back soon for updates!*
 
 ## Related Research
 

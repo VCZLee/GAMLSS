@@ -1,14 +1,7 @@
 """Feature objects for use in models.
 
-To construct a calibrated model, create the calibrated model configuration and pass it
-in to the corresponding calibrated model constructor.
-
-Example:
-```python
-feature_configs = [...]
-linear_config = CalibratedLinearConfig(feature_configs, ...)
-linear_model = CalibratedLinear(linear_config)
-```
+To construct a model, create the feature configurations and pass them
+in to the model constructor.
 """
 
 import logging
