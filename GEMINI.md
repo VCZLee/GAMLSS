@@ -5,6 +5,9 @@ A PyTorch implementation of lattice modeling techniques, focusing on interpretab
 ## Project Overview
 
 - **Purpose**: To provide a library for building and training calibrated models (linear or lattice-based) with domain-knowledge constraints. This library is a partial port of TensorFlow Lattice to PyTorch.
+- **Context & Terminology**:
+  - **TensorFlow Lattice Port**: As this is a port, references to "TensorFlow" in general should be understood as referring to TensorFlow or, more specifically, TensorFlow Lattice.
+  - **PWL / PWL Calibrator**: References to "PWL" or "PWL Calibrator" (Piecewise Linear) should be interpreted as TensorFlow Lattice's implementation of the numeric calibrator.
 - **Core Architecture**:
   - `Classifier`: High-level API for training models on tabular data.
   - `FeatureConfig`: Configuration for individual features (keypoints, monotonicity, etc.).
