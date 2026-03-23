@@ -5,6 +5,7 @@ A PyTorch implementation of lattice modeling techniques, focusing on interpretab
 ## Project Overview
 
 - **Purpose**: To provide a library for building and training calibrated models (linear or lattice-based) with domain-knowledge constraints. This library is a partial port of TensorFlow Lattice to PyTorch.
+- **GAMLSS Goal**: This fork is specifically used to help create a **GAMLSS (Generalized Additive Models for Location, Scale, and Shape)** implementation in Python. The objective is a GAMLSS model where each term is a function (either a PWL/numeric calibration or a categorical calibration) of an input variable.
 - **Context & Terminology**:
   - **TensorFlow Lattice Port**: As this is a port, references to "TensorFlow" in general should be understood as referring to TensorFlow or, more specifically, TensorFlow Lattice.
   - **PWL / PWL Calibrator**: References to "PWL" or "PWL Calibrator" (Piecewise Linear) should be interpreted as TensorFlow Lattice's implementation of the numeric calibrator.
