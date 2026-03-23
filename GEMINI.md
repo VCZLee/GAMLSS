@@ -55,6 +55,7 @@ uv sync; uv run pytest
 ## Source Control and Branches
 
 - **main**: The primary development branch.
+- **ci/cd-config**: Prefer pushing changes related to CI/CD, system configurations, and documentation to this branch, even when working on other branches, unless doing so adds significant complexity or risk of breakage.
 - **gh-pages**: Automatically managed by GitHub Actions (`docs.yml`) for hosting documentation. Do not manually merge into or modify this branch.
 - **Feature Branches**: Use descriptive names (e.g., `feat/`, `fix/`, `chore/`).
 
