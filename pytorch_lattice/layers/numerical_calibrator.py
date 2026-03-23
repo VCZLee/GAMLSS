@@ -51,6 +51,7 @@ class NumericalCalibrator(ConstrainedModule):
         monotonicity: Optional[Monotonicity] = None,
         kernel_init: NumericalCalibratorInit = NumericalCalibratorInit.EQUAL_HEIGHTS,
         projection_iterations: int = 8,
+        is_cyclic: bool = False,
         input_keypoints_type: InputKeypointsType = InputKeypointsType.FIXED,
     ) -> None:
         """Initializes an instance of `NumericalCalibrator`.
@@ -69,14 +70,20 @@ class NumericalCalibrator(ConstrainedModule):
             kernel_init: Initialization scheme to use for the kernel.
             projection_iterations: Number of times to run Dykstra's projection
                 algorithm when applying constraints.
+            is_cyclic: Whether the output for the last keypoint should be identical to
+                the output for the first keypoint.
             input_keypoints_type: `InputKeypointType` of either `FIXED` or `LEARNED`. If
                 `LEARNED`, keypoints other than the first or last will follow
                 `input_keypoints` for initialization but adapt during training.
 
         Raises:
+            ValueError: If `is_cyclic` is True and `monotonicity` is set.
             ValueError: If `kernel_init` is invalid.
         """
         super().__init__()
+
+        if is_cyclic and monotonicity is not None:
+            raise ValueError("is_cyclic cannot be True if monotonicity is set.")
 
         self.input_keypoints = input_keypoints
         self.missing_input_value = missing_input_value
@@ -85,6 +92,7 @@ class NumericalCalibrator(ConstrainedModule):
         self.monotonicity = monotonicity
         self.kernel_init = kernel_init
         self.projection_iterations = projection_iterations
+        self.is_cyclic = is_cyclic
         self.input_keypoints_type = input_keypoints_type
 
         # Determine default output initialization values if bounds are not fully set.
@@ -117,12 +125,13 @@ class NumericalCalibrator(ConstrainedModule):
             output_init_range = self._output_init_max - self._output_init_min
             if kernel_init == NumericalCalibratorInit.EQUAL_HEIGHTS:
                 num_segments = self._interpolation_keypoints.size()[0]
+                if is_cyclic:
+                    num_segments -= 1
                 segment_height = output_init_range / num_segments
                 heights = torch.tensor([[segment_height]] * num_segments)
             elif kernel_init == NumericalCalibratorInit.EQUAL_SLOPES:
-                heights = (
-                    self._lengths * output_init_range / torch.sum(self._lengths)
-                )[:, None]
+                lengths = self._lengths[:-1] if self.is_cyclic else self._lengths
+                heights = (lengths * output_init_range / torch.sum(lengths))[:, None]
             else:
                 raise ValueError(f"Unknown kernel init: {self.kernel_init}")
 
@@ -169,7 +178,13 @@ class NumericalCalibrator(ConstrainedModule):
         interpolation_weights = torch.cat(
             (torch.ones_like(x), interpolation_weights), -1
         )
-        result = torch.mm(interpolation_weights, self.kernel)
+
+        _kernel: torch.Tensor = self.kernel
+        if self.is_cyclic:
+            last_height = -torch.sum(self.kernel[1:], dim=0, keepdim=True)
+            _kernel = torch.cat((self.kernel, last_height), 0)
+
+        result = torch.mm(interpolation_weights, _kernel)
 
         if self.missing_input_value is not None:
             missing_mask = torch.eq(x, self.missing_input_value).long()
@@ -286,17 +301,18 @@ class NumericalCalibrator(ConstrainedModule):
         ):
             messages.append("Min weight less than output_min.")
 
-        diffs = weights[1:]
-        violation_indices = []
+        if not self.is_cyclic:
+            diffs = weights[1:]
+            violation_indices = []
 
-        if self.monotonicity == Monotonicity.INCREASING:
-            violation_indices = (diffs < -eps).nonzero().tolist()
-        elif self.monotonicity == Monotonicity.DECREASING:
-            violation_indices = (diffs > eps).nonzero().tolist()
+            if self.monotonicity == Monotonicity.INCREASING:
+                violation_indices = (diffs < -eps).nonzero().tolist()
+            elif self.monotonicity == Monotonicity.DECREASING:
+                violation_indices = (diffs > eps).nonzero().tolist()
 
-        violation_indices = [(i[0], i[0] + 1) for i in violation_indices]
-        if violation_indices:
-            messages.append(f"Monotonicity violated at: {str(violation_indices)}.")
+            violation_indices = [(i[0], i[0] + 1) for i in violation_indices]
+            if violation_indices:
+                messages.append(f"Monotonicity violated at: {str(violation_indices)}.")
 
         return messages
 
@@ -314,7 +330,11 @@ class NumericalCalibrator(ConstrainedModule):
     @torch.no_grad()
     def keypoints_outputs(self) -> torch.Tensor:
         """Returns tensor of keypoint outputs."""
-        return torch.cumsum(self.kernel.data, 0).T[0]
+        kernel = self.kernel.data
+        if self.is_cyclic:
+            last_height = -torch.sum(kernel[1:], dim=0, keepdim=True)
+            kernel = torch.cat((kernel, last_height), 0)
+        return torch.cumsum(kernel, 0).T[0]
 
     ################################################################################
     ############################## PRIVATE METHODS #################################

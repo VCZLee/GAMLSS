@@ -30,6 +30,7 @@ class NumericalFeature:
         input_keypoints_init: InputKeypointsInit = InputKeypointsInit.QUANTILES,
         missing_input_value: Optional[float] = None,
         monotonicity: Optional[Monotonicity] = None,
+        is_cyclic: bool = False,
         projection_iterations: int = 8,
         lattice_size: int = 2,
     ) -> None:
@@ -48,6 +49,8 @@ class NumericalFeature:
             missing_input_value: If provided, this feature's calibrator will learn to
                 map all instances of this missing input value to a learned output value.
             monotonicity: Monotonicity constraint for this feature, if any.
+            is_cyclic: Whether the output for the last keypoint should be identical to
+                the output for the first keypoint.
             projection_iterations: Number of times to run Dykstra's projection
                 algorithm when applying constraints.
             lattice_size: The default number of keypoints outputted by the
@@ -67,6 +70,7 @@ class NumericalFeature:
         self.input_keypoints_init = input_keypoints_init
         self.missing_input_value = missing_input_value
         self.monotonicity = monotonicity
+        self.is_cyclic = is_cyclic
         self.projection_iterations = projection_iterations
         self.lattice_size = lattice_size
 
