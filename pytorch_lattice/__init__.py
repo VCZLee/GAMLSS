@@ -10,8 +10,6 @@ from .enums import (
     CategoricalCalibratorInit,
     InputKeypointsInit,
     InputKeypointsType,
-    Interpolation,
-    LatticeInit,
     Monotonicity,
     NumericalCalibratorInit,
 )

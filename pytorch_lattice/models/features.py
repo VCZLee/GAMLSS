@@ -32,7 +32,6 @@ class NumericalFeature:
         monotonicity: Optional[Monotonicity] = None,
         is_cyclic: bool = False,
         projection_iterations: int = 8,
-        lattice_size: int = 2,
     ) -> None:
         """Initializes a `NumericalFeatureConfig` instance.
 
@@ -53,8 +52,6 @@ class NumericalFeature:
                 the output for the first keypoint.
             projection_iterations: Number of times to run Dykstra's projection
                 algorithm when applying constraints.
-            lattice_size: The default number of keypoints outputted by the
-                calibrator. Only used within `Lattice` models.
 
         Raises:
             ValueError: If `data` contains NaN values.
@@ -72,7 +69,6 @@ class NumericalFeature:
         self.monotonicity = monotonicity
         self.is_cyclic = is_cyclic
         self.projection_iterations = projection_iterations
-        self.lattice_size = lattice_size
 
         sorted_unique_values = np.unique(data)
 
@@ -116,7 +112,6 @@ class CategoricalFeature:
         categories: Union[list[int], list[str]],
         missing_input_value: Optional[float] = None,
         monotonicity_pairs: Optional[list[tuple[str, str]]] = None,
-        lattice_size: int = 2,
     ) -> None:
         """Initializes a `CategoricalFeatureConfig` instance.
 
@@ -131,14 +126,11 @@ class CategoricalFeature:
             monotonicity_pairs: List of pairs of categories `(category_a, category_b)`
                 indicating that the calibrator output for `category_b` should be greater
                 than or equal to that of `category_a`.
-            lattice_size: The default number of keypoints outputted by the calibrator.
-                Only used within `Lattice` models.
         """
         self.feature_name = feature_name
         self.categories = categories
         self.missing_input_value = missing_input_value
         self.monotonicity_pairs = monotonicity_pairs
-        self.lattice_size = lattice_size
 
         self.category_indices = {category: i for i, category in enumerate(categories)}
         self.monotonicity_index_pairs = [

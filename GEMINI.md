@@ -25,7 +25,7 @@ To aid in porting, original TensorFlow Lattice (TFL) source files are stored in 
 
 ## Core Architecture
   - `FeatureConfig`: Configuration for individual features (keypoints, monotonicity, etc.).
-  - `Layers`: Custom PyTorch layers for numerical/categorical calibration and lattice interpolation.
+  - `Layers`: Custom PyTorch layers for numerical and categorical calibration.
   - `Models`: High-level GAMLSS-focused model architectures (in development).
 - **Main Technologies**: PyTorch, Pandas, NumPy, Matplotlib, Pydantic, uv.
 
@@ -78,7 +78,7 @@ uv sync; uv run pytest
 ## Directory Structure
 
 - `pytorch_lattice/`: Core library code.
-  - `layers/`: Implementation of calibration and lattice layers.
+  - `layers/`: Implementation of calibration layers.
   - `models/`: High-level model architectures.
   - `utils/`: Data processing and model utility functions.
 - `tests/`: Comprehensive test suite.
