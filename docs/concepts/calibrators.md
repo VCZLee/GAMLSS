@@ -11,7 +11,7 @@ Categorical Calibrator          | Numerical Calibrator
 
 ## Feature Calibrators
 
-In a [calibrated model](model_types.md), the first layer is the calibration layer that calibrates each feature using a calibrator that's learned per feature.
+In a calibrated model, the first layer is the calibration layer that calibrates each feature using a calibrator that's learned per feature.
 
 There are three primary benefits to using feature calibrators:
 

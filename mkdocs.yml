@@ -83,7 +83,6 @@ nav:
   - Concepts:
       - Calibrators: "concepts/calibrators.md"
       - Shape Constraints: "concepts/shape_constraints.md"
-  - Walkthroughs:
   - API Reference:
       - layers: "api/layers.md"
       - utils: "api/utils.md"
