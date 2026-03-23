@@ -1047,3 +1047,40 @@ def test_is_cyclic_monotonicity_exclusive():
             is_cyclic=True,
             monotonicity=Monotonicity.INCREASING,
         )
+
+
+def test_regularization_loss():
+    """Tests that NumericalCalibrator properly returns its regularization loss."""
+    input_keypoints = np.linspace(0.0, 4.0, num=5)
+    calibrator = NumericalCalibrator(
+        input_keypoints,
+        laplacian_l1=1.0,
+        laplacian_l2=0.5,
+        hessian_l1=1.0,
+        hessian_l2=0.5,
+        wrinkle_l1=1.0,
+        wrinkle_l2=0.5,
+    )
+
+    # bias=1.0, h1=0.5, h2=0.2, h3=-0.1, h4=0.3
+    calibrator.kernel.data = torch.tensor([[1.0], [0.5], [0.2], [-0.1], [0.3]]).double()
+
+    # Laplacian:
+    # L1 = 1.0 * (0.5 + 0.2 + 0.1 + 0.3) = 1.1
+    # L2 = 0.5 * (0.5^2 + 0.2^2 + 0.1^2 + 0.3^2) = 0.5 * 0.39 = 0.195
+    # Total Laplacian = 1.295
+    #
+    # Hessian:
+    # nonlinearity = [0.2-0.5, -0.1-0.2, 0.3-(-0.1)] = [-0.3, -0.3, 0.4]
+    # L1 = 1.0 * (0.3 + 0.3 + 0.4) = 1.0
+    # L2 = 0.5 * (0.09 + 0.09 + 0.16) = 0.5 * 0.34 = 0.17
+    # Total Hessian = 1.17
+    #
+    # Wrinkle:
+    # wrinkleness = [-0.3 - (-0.3), 0.4 - (-0.3)] = [0.0, 0.7]
+    # L1 = 1.0 * (0.0 + 0.7) = 0.7
+    # L2 = 0.5 * (0.0 + 0.49) = 0.245
+    # Total Wrinkle = 0.945
+    #
+    # Total = 1.295 + 1.17 + 0.945 = 3.41
+    assert torch.allclose(calibrator.regularization_loss(), torch.tensor(3.41).double())

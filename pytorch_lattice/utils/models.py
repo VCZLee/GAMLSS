@@ -49,6 +49,13 @@ def initialize_feature_calibrators(
                 monotonicity=feature.monotonicity,
                 kernel_init=NumericalCalibratorInit.EQUAL_SLOPES,
                 projection_iterations=feature.projection_iterations,
+                is_cyclic=feature.is_cyclic,
+                laplacian_l1=feature.laplacian_l1,
+                laplacian_l2=feature.laplacian_l2,
+                hessian_l1=feature.hessian_l1,
+                hessian_l2=feature.hessian_l2,
+                wrinkle_l1=feature.wrinkle_l1,
+                wrinkle_l2=feature.wrinkle_l2,
             )
         elif isinstance(feature, CategoricalFeature):
             calibrators[feature.feature_name] = CategoricalCalibrator(

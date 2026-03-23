@@ -32,6 +32,12 @@ class NumericalFeature:
         monotonicity: Optional[Monotonicity] = None,
         is_cyclic: bool = False,
         projection_iterations: int = 8,
+        laplacian_l1: float = 0.0,
+        laplacian_l2: float = 0.0,
+        hessian_l1: float = 0.0,
+        hessian_l2: float = 0.0,
+        wrinkle_l1: float = 0.0,
+        wrinkle_l2: float = 0.0,
     ) -> None:
         """Initializes a `NumericalFeatureConfig` instance.
 
@@ -52,6 +58,12 @@ class NumericalFeature:
                 the output for the first keypoint.
             projection_iterations: Number of times to run Dykstra's projection
                 algorithm when applying constraints.
+            laplacian_l1: L1 regularization amount for the Laplacian regularizer.
+            laplacian_l2: L2 regularization amount for the Laplacian regularizer.
+            hessian_l1: L1 regularization amount for the Hessian regularizer.
+            hessian_l2: L2 regularization amount for the Hessian regularizer.
+            wrinkle_l1: L1 regularization amount for the Wrinkle regularizer.
+            wrinkle_l2: L2 regularization amount for the Wrinkle regularizer.
 
         Raises:
             ValueError: If `data` contains NaN values.
@@ -69,6 +81,12 @@ class NumericalFeature:
         self.monotonicity = monotonicity
         self.is_cyclic = is_cyclic
         self.projection_iterations = projection_iterations
+        self.laplacian_l1 = laplacian_l1
+        self.laplacian_l2 = laplacian_l2
+        self.hessian_l1 = hessian_l1
+        self.hessian_l2 = hessian_l2
+        self.wrinkle_l1 = wrinkle_l1
+        self.wrinkle_l2 = wrinkle_l2
 
         sorted_unique_values = np.unique(data)
 

@@ -91,6 +91,27 @@ def test_numerical_feature_config_is_cyclic():
     assert feature.is_cyclic is True
 
 
+def test_numerical_feature_config_regularization():
+    """Tests that regularization parameters are properly set in NumericalFeature."""
+    data = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+    feature = NumericalFeature(
+        "test",
+        data,
+        laplacian_l1=1.0,
+        laplacian_l2=0.5,
+        hessian_l1=0.1,
+        hessian_l2=0.2,
+        wrinkle_l1=0.3,
+        wrinkle_l2=0.4,
+    )
+    assert feature.laplacian_l1 == 1.0
+    assert feature.laplacian_l2 == 0.5
+    assert feature.hessian_l1 == 0.1
+    assert feature.hessian_l2 == 0.2
+    assert feature.wrinkle_l1 == 0.3
+    assert feature.wrinkle_l2 == 0.4
+
+
 @pytest.mark.parametrize(
     "categories,missing_input_value,monotonicity_pairs,expected_category_indices,"
     "expected_monotonicity_index_pairs",
