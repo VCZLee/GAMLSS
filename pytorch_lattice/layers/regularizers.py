@@ -165,3 +165,43 @@ class WrinkleRegularizer(nn.Module):
             loss = loss + self.l2 * torch.sum(torch.square(wrinkleness))
 
         return loss
+
+
+class L1L2Regularizer(nn.Module):
+    """L1/L2 regularizer for layer weights.
+
+    This regularizer penalizes the absolute and/or squared values of the weights
+    directly. It is defined to be:
+
+    `l1 * ||x||_1 + l2 * ||x||_2^2`
+
+    where `x` are the weights of the layer.
+    """
+
+    def __init__(self, l1: float = 0.0, l2: float = 0.0):
+        """Initializes an instance of `L1L2Regularizer`.
+
+        Args:
+            l1: l1 regularization amount.
+            l2: l2 regularization amount.
+        """
+        super().__init__()
+        self.l1 = l1
+        self.l2 = l2
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Returns regularization loss.
+
+        Args:
+            x: Tensor representing weights of a layer.
+        """
+        if not self.l1 and not self.l2:
+            return torch.tensor(0.0, dtype=x.dtype, device=x.device)
+
+        loss = torch.tensor(0.0, dtype=x.dtype, device=x.device)
+        if self.l1:
+            loss = loss + self.l1 * torch.sum(torch.abs(x))
+        if self.l2:
+            loss = loss + self.l2 * torch.sum(torch.square(x))
+
+        return loss

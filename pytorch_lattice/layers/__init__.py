@@ -3,4 +3,9 @@
 from .categorical_calibrator import CategoricalCalibrator
 from .linear import Linear
 from .numerical_calibrator import NumericalCalibrator
-from .regularizers import HessianRegularizer, LaplacianRegularizer, WrinkleRegularizer
+from .regularizers import (
+    HessianRegularizer,
+    LaplacianRegularizer,
+    L1L2Regularizer,
+    WrinkleRegularizer,
+)

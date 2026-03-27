@@ -5,6 +5,7 @@ from pytorch_lattice.layers.regularizers import (
     LaplacianRegularizer,
     HessianRegularizer,
     WrinkleRegularizer,
+    L1L2Regularizer,
 )
 
 
@@ -101,3 +102,27 @@ def test_wrinkle_regularizer():
     # L2 = 0.0^2 + 0.7^2 + (-1.6)^2 + 2.6^2 + (-1.7)^2 = 0.0 + 0.49 + 2.56 + 6.76 + 2.89 = 12.7
     # Total = 6.6 + 12.7 = 19.3
     assert torch.allclose(reg(x), torch.tensor(19.3).double())
+
+
+def test_l1_l2_regularizer():
+    """Tests L1L2Regularizer."""
+    x = torch.tensor([[1.0], [-0.5], [2.0]]).double()
+
+    # l1 only
+    reg = L1L2Regularizer(l1=1.0, l2=0.0)
+    # loss = |1.0| + |-0.5| + |2.0| = 3.5
+    assert torch.allclose(reg(x), torch.tensor(3.5).double())
+
+    # l2 only
+    reg = L1L2Regularizer(l1=0.0, l2=1.0)
+    # loss = 1.0^2 + (-0.5)^2 + 2.0^2 = 1.0 + 0.25 + 4.0 = 5.25
+    assert torch.allclose(reg(x), torch.tensor(5.25).double())
+
+    # l1 + l2
+    reg = L1L2Regularizer(l1=1.0, l2=1.0)
+    # loss = 3.5 + 5.25 = 8.75
+    assert torch.allclose(reg(x), torch.tensor(8.75).double())
+
+    # zero regularization
+    reg = L1L2Regularizer(l1=0.0, l2=0.0)
+    assert torch.allclose(reg(x), torch.tensor(0.0).double())
