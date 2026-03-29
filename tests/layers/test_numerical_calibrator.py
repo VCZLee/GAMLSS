@@ -6,7 +6,12 @@ import torch
 
 from pytorch_lattice import Monotonicity, NumericalCalibratorInit
 from pytorch_lattice.enums import InputKeypointsType
-from pytorch_lattice.layers import NumericalCalibrator
+from pytorch_lattice.layers import (
+    HessianRegularizer,
+    LaplacianRegularizer,
+    NumericalCalibrator,
+    WrinkleRegularizer,
+)
 
 from ..testing_utils import train_calibrated_module
 
@@ -1054,12 +1059,11 @@ def test_regularization_loss():
     input_keypoints = np.linspace(0.0, 4.0, num=5)
     calibrator = NumericalCalibrator(
         input_keypoints,
-        laplacian_l1=1.0,
-        laplacian_l2=0.5,
-        hessian_l1=1.0,
-        hessian_l2=0.5,
-        wrinkle_l1=1.0,
-        wrinkle_l2=0.5,
+        regularizers=[
+            LaplacianRegularizer(l1=1.0, l2=1.0),
+            HessianRegularizer(l1=1.0, l2=1.0),
+            WrinkleRegularizer(l1=1.0, l2=1.0),
+        ],
     )
 
     # bias=1.0, h1=0.5, h2=0.2, h3=-0.1, h4=0.3
@@ -1067,20 +1071,52 @@ def test_regularization_loss():
 
     # Laplacian:
     # L1 = 1.0 * (0.5 + 0.2 + 0.1 + 0.3) = 1.1
-    # L2 = 0.5 * (0.5^2 + 0.2^2 + 0.1^2 + 0.3^2) = 0.5 * 0.39 = 0.195
-    # Total Laplacian = 1.295
+    # L2 = 1.0 * (0.5^2 + 0.2^2 + 0.1^2 + 0.3^2) = 1.0 * 0.39 = 0.39
+    # Total Laplacian = 1.49
     #
     # Hessian:
     # nonlinearity = [0.2-0.5, -0.1-0.2, 0.3-(-0.1)] = [-0.3, -0.3, 0.4]
     # L1 = 1.0 * (0.3 + 0.3 + 0.4) = 1.0
-    # L2 = 0.5 * (0.09 + 0.09 + 0.16) = 0.5 * 0.34 = 0.17
-    # Total Hessian = 1.17
+    # L2 = 1.0 * (0.09 + 0.09 + 0.16) = 1.0 * 0.34 = 0.34
+    # Total Hessian = 1.34
     #
     # Wrinkle:
     # wrinkleness = [-0.3 - (-0.3), 0.4 - (-0.3)] = [0.0, 0.7]
     # L1 = 1.0 * (0.0 + 0.7) = 0.7
-    # L2 = 0.5 * (0.0 + 0.49) = 0.245
-    # Total Wrinkle = 0.945
+    # L2 = 1.0 * (0.0 + 0.49) = 0.49
+    # Total Wrinkle = 1.19
     #
-    # Total = 1.295 + 1.17 + 0.945 = 3.41
-    assert torch.allclose(calibrator.regularization_loss(), torch.tensor(3.41).double())
+    # Total = 1.49 + 1.34 + 1.19 = 4.02
+    assert torch.allclose(calibrator.regularization_loss(), torch.tensor(4.02).double())
+
+
+def test_is_cyclic_cascading():
+    """Tests that is_cyclic cascades to regularizers in NumericalCalibrator."""
+    input_keypoints = np.linspace(0.0, 4.0, num=5)
+
+    # Case 1: is_cyclic=True cascades to None
+    laplacian = LaplacianRegularizer(l1=1.0)
+    calibrator = NumericalCalibrator(
+        input_keypoints, is_cyclic=True, regularizers=[laplacian]
+    )
+    assert laplacian.is_cyclic is True
+
+    # Case 2: is_cyclic=True matches explicit True
+    laplacian = LaplacianRegularizer(l1=1.0, is_cyclic=True)
+    calibrator = NumericalCalibrator(
+        input_keypoints, is_cyclic=True, regularizers=[laplacian]
+    )
+    assert laplacian.is_cyclic is True
+
+    # Case 3: is_cyclic=True conflicts with explicit False
+    laplacian = LaplacianRegularizer(l1=1.0, is_cyclic=False)
+    with pytest.raises(ValueError, match="conflicting is_cyclic"):
+        NumericalCalibrator(input_keypoints, is_cyclic=True, regularizers=[laplacian])
+
+    # Case 4: is_cyclic=None respects regularizer setting
+    laplacian = LaplacianRegularizer(l1=1.0, is_cyclic=True)
+    calibrator = NumericalCalibrator(
+        input_keypoints, is_cyclic=None, regularizers=[laplacian]
+    )
+    assert laplacian.is_cyclic is True
+    assert calibrator.is_cyclic is False  # Internal behavior is False

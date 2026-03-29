@@ -2,6 +2,7 @@
 
 import torch
 import torch.nn as nn
+from typing import Optional
 
 
 class LaplacianRegularizer(nn.Module):
@@ -19,7 +20,7 @@ class LaplacianRegularizer(nn.Module):
         self,
         l1: float = 0.0,
         l2: float = 0.0,
-        is_cyclic: bool = False,
+        is_cyclic: Optional[bool] = None,
         regularize_bias: bool = False,
     ):
         """Initializes an instance of `LaplacianRegularizer`.
@@ -28,7 +29,8 @@ class LaplacianRegularizer(nn.Module):
             l1: l1 regularization amount.
             l2: l2 regularization amount.
             is_cyclic: Whether the first and last keypoints should take the same
-                output value.
+                output value. If `None`, the regularizer will use its own internal
+                default or be set by the parent calibrator.
             regularize_bias: Whether to also apply the regularization penalty to
                 the bias term (the first weight). Useful for pushing the entire
                 function towards a flat line at 0.
@@ -50,8 +52,10 @@ class LaplacianRegularizer(nn.Module):
         if not self.l1 and not self.l2:
             return torch.tensor(0.0, dtype=x.dtype, device=x.device)
 
+        is_cyclic = self.is_cyclic if self.is_cyclic is not None else False
+
         heights = x[1:]
-        if self.is_cyclic:
+        if is_cyclic:
             # Need to add such last height to make all heights to sum up to 0.0 in
             # order to make calibrator cyclic.
             last_height = -torch.sum(heights, dim=0, keepdim=True)
@@ -85,14 +89,17 @@ class HessianRegularizer(nn.Module):
     where `nonlinearity` is the change in segment heights.
     """
 
-    def __init__(self, l1: float = 0.0, l2: float = 0.0, is_cyclic: bool = False):
+    def __init__(
+        self, l1: float = 0.0, l2: float = 0.0, is_cyclic: Optional[bool] = None
+    ):
         """Initializes an instance of `HessianRegularizer`.
 
         Args:
             l1: l1 regularization amount.
             l2: l2 regularization amount.
             is_cyclic: Whether the first and last keypoints should take the same
-                output value.
+                output value. If `None`, the regularizer will use its own internal
+                default or be set by the parent calibrator.
         """
         super().__init__()
         self.l1 = l1
@@ -110,7 +117,9 @@ class HessianRegularizer(nn.Module):
         if not self.l1 and not self.l2:
             return torch.tensor(0.0, dtype=x.dtype, device=x.device)
 
-        if self.is_cyclic:
+        is_cyclic = self.is_cyclic if self.is_cyclic is not None else False
+
+        if is_cyclic:
             heights = x[1:]
             last_height = -torch.sum(heights, dim=0, keepdim=True)
             heights = torch.cat([heights, last_height, heights[0:1]], dim=0)
@@ -138,14 +147,17 @@ class WrinkleRegularizer(nn.Module):
     where `third_derivative` is the change in nonlinearity.
     """
 
-    def __init__(self, l1: float = 0.0, l2: float = 0.0, is_cyclic: bool = False):
+    def __init__(
+        self, l1: float = 0.0, l2: float = 0.0, is_cyclic: Optional[bool] = None
+    ):
         """Initializes an instance of `WrinkleRegularizer`.
 
         Args:
             l1: l1 regularization amount.
             l2: l2 regularization amount.
             is_cyclic: Whether the first and last keypoints should take the same
-                output value.
+                output value. If `None`, the regularizer will use its own internal
+                default or be set by the parent calibrator.
         """
         super().__init__()
         self.l1 = l1
@@ -165,7 +177,9 @@ class WrinkleRegularizer(nn.Module):
         if x.shape[0] < 3:
             return torch.tensor(0.0, dtype=x.dtype, device=x.device)
 
-        if self.is_cyclic:
+        is_cyclic = self.is_cyclic if self.is_cyclic is not None else False
+
+        if is_cyclic:
             heights = x[1:]
             last_height = -torch.sum(heights, dim=0, keepdim=True)
             heights = torch.cat(

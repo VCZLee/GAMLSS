@@ -50,12 +50,7 @@ def initialize_feature_calibrators(
                 kernel_init=NumericalCalibratorInit.EQUAL_SLOPES,
                 projection_iterations=feature.projection_iterations,
                 is_cyclic=feature.is_cyclic,
-                laplacian_l1=feature.laplacian_l1,
-                laplacian_l2=feature.laplacian_l2,
-                hessian_l1=feature.hessian_l1,
-                hessian_l2=feature.hessian_l2,
-                wrinkle_l1=feature.wrinkle_l1,
-                wrinkle_l2=feature.wrinkle_l2,
+                regularizers=feature.regularizers,
             )
         elif isinstance(feature, CategoricalFeature):
             calibrators[feature.feature_name] = CategoricalCalibrator(
@@ -65,6 +60,7 @@ def initialize_feature_calibrators(
                 output_max=feature_max,
                 monotonicity_pairs=feature.monotonicity_index_pairs,
                 kernel_init=CategoricalCalibratorInit.UNIFORM,
+                regularizers=feature.regularizers,
             )
         else:
             raise ValueError(f"Unknown type {type(feature)} for feature {feature}")

@@ -49,6 +49,7 @@ class CategoricalCalibrator(ConstrainedModule):
         output_max: Optional[float] = None,
         monotonicity_pairs: Optional[list[tuple[int, int]]] = None,
         kernel_init: CategoricalCalibratorInit = CategoricalCalibratorInit.UNIFORM,
+        regularizers: Optional[list[torch.nn.Module]] = None,
     ) -> None:
         """Initializes an instance of `CategoricalCalibrator`.
 
@@ -66,6 +67,7 @@ class CategoricalCalibrator(ConstrainedModule):
                 calibrator output for index `j` should be greater than or equal to that
                 of index `i`.
             kernel_init: Initialization scheme to use for the kernel.
+            regularizers: A list of regularizers to apply to the calibrator's kernel.
 
         Raises:
             ValueError: If `monotonicity_pairs` is cyclic.
@@ -93,6 +95,7 @@ class CategoricalCalibrator(ConstrainedModule):
             except CycleError as exc:
                 raise ValueError("monotonicity_pairs is cyclic") from exc
         self.kernel_init = kernel_init
+        self.regularizers = regularizers if regularizers is not None else []
 
         self.kernel = torch.nn.Parameter(torch.Tensor(self.num_categories, 1).double())
         if kernel_init == CategoricalCalibratorInit.CONSTANT:
@@ -117,6 +120,13 @@ class CategoricalCalibrator(ConstrainedModule):
             torch.nn.init.uniform_(self.kernel, low, high)
         else:
             raise ValueError(f"Unknown kernel init: {kernel_init}")
+
+    def regularization_loss(self) -> torch.Tensor:
+        """Returns the regularization loss for the calibrator."""
+        return sum(
+            [reg(self.kernel) for reg in self.regularizers],
+            torch.tensor(0.0, dtype=self.kernel.dtype, device=self.kernel.device),
+        )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Calibrates categorical inputs through a learned mapping.

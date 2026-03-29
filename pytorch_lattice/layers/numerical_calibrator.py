@@ -11,7 +11,6 @@ from typing import Optional
 import numpy as np
 import torch
 
-from .regularizers import HessianRegularizer, LaplacianRegularizer, WrinkleRegularizer
 from ..constrained_module import ConstrainedModule
 from ..enums import InputKeypointsType, Monotonicity, NumericalCalibratorInit
 
@@ -52,15 +51,9 @@ class NumericalCalibrator(ConstrainedModule):
         monotonicity: Optional[Monotonicity] = None,
         kernel_init: NumericalCalibratorInit = NumericalCalibratorInit.EQUAL_HEIGHTS,
         projection_iterations: int = 8,
-        is_cyclic: bool = False,
+        is_cyclic: Optional[bool] = None,
         input_keypoints_type: InputKeypointsType = InputKeypointsType.FIXED,
-        laplacian_l1: float = 0.0,
-        laplacian_l2: float = 0.0,
-        laplacian_regularize_bias: bool = False,
-        hessian_l1: float = 0.0,
-        hessian_l2: float = 0.0,
-        wrinkle_l1: float = 0.0,
-        wrinkle_l2: float = 0.0,
+        regularizers: Optional[list[torch.nn.Module]] = None,
     ) -> None:
         """Initializes an instance of `NumericalCalibrator`.
 
@@ -79,26 +72,22 @@ class NumericalCalibrator(ConstrainedModule):
             projection_iterations: Number of times to run Dykstra's projection
                 algorithm when applying constraints.
             is_cyclic: Whether the output for the last keypoint should be identical to
-                the output for the first keypoint.
+                the output for the first keypoint. If `None`, will be treated as `False`
+                but allows regularizers to maintain their own `is_cyclic` setting.
             input_keypoints_type: `InputKeypointType` of either `FIXED` or `LEARNED`. If
                 `LEARNED`, keypoints other than the first or last will follow
                 `input_keypoints` for initialization but adapt during training.
-            laplacian_l1: L1 regularization amount for the Laplacian regularizer.
-            laplacian_l2: L2 regularization amount for the Laplacian regularizer.
-            laplacian_regularize_bias: Whether to also apply the Laplacian penalty to
-                the bias term.
-            hessian_l1: L1 regularization amount for the Hessian regularizer.
-            hessian_l2: L2 regularization amount for the Hessian regularizer.
-            wrinkle_l1: L1 regularization amount for the Wrinkle regularizer.
-            wrinkle_l2: L2 regularization amount for the Wrinkle regularizer.
+            regularizers: A list of regularizers to apply to the calibrator's kernel.
 
         Raises:
             ValueError: If `is_cyclic` is True and `monotonicity` is set.
             ValueError: If `kernel_init` is invalid.
+            ValueError: If any regularizer has a conflicting `is_cyclic` value.
         """
         super().__init__()
 
-        if is_cyclic and monotonicity is not None:
+        self.is_cyclic = is_cyclic if is_cyclic is not None else False
+        if self.is_cyclic and monotonicity is not None:
             raise ValueError("is_cyclic cannot be True if monotonicity is set.")
 
         self.input_keypoints = input_keypoints
@@ -108,26 +97,19 @@ class NumericalCalibrator(ConstrainedModule):
         self.monotonicity = monotonicity
         self.kernel_init = kernel_init
         self.projection_iterations = projection_iterations
-        self.is_cyclic = is_cyclic
         self.input_keypoints_type = input_keypoints_type
-        self.laplacian_l1 = laplacian_l1
-        self.laplacian_l2 = laplacian_l2
-        self.laplacian_regularizer = LaplacianRegularizer(
-            l1=laplacian_l1,
-            l2=laplacian_l2,
-            is_cyclic=is_cyclic,
-            regularize_bias=laplacian_regularize_bias,
-        )
-        self.hessian_l1 = hessian_l1
-        self.hessian_l2 = hessian_l2
-        self.hessian_regularizer = HessianRegularizer(
-            l1=hessian_l1, l2=hessian_l2, is_cyclic=is_cyclic
-        )
-        self.wrinkle_l1 = wrinkle_l1
-        self.wrinkle_l2 = wrinkle_l2
-        self.wrinkle_regularizer = WrinkleRegularizer(
-            l1=wrinkle_l1, l2=wrinkle_l2, is_cyclic=is_cyclic
-        )
+
+        self.regularizers = regularizers if regularizers is not None else []
+        if is_cyclic is not None:
+            for reg in self.regularizers:
+                if hasattr(reg, "is_cyclic"):
+                    reg_is_cyclic = getattr(reg, "is_cyclic")
+                    if reg_is_cyclic is not None and reg_is_cyclic != is_cyclic:
+                        raise ValueError(
+                            f"Regularizer {reg} has conflicting is_cyclic={reg_is_cyclic} "
+                            f"with calibrator is_cyclic={is_cyclic}."
+                        )
+                    setattr(reg, "is_cyclic", is_cyclic)
 
         # Determine default output initialization values if bounds are not fully set.
         if output_min is not None and output_max is not None:
@@ -187,10 +169,9 @@ class NumericalCalibrator(ConstrainedModule):
 
     def regularization_loss(self) -> torch.Tensor:
         """Returns the regularization loss for the calibrator."""
-        return (
-            self.laplacian_regularizer(self.kernel)
-            + self.hessian_regularizer(self.kernel)
-            + self.wrinkle_regularizer(self.kernel)
+        return sum(
+            [reg(self.kernel) for reg in self.regularizers],
+            torch.tensor(0.0, dtype=self.kernel.dtype, device=self.kernel.device),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

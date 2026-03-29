@@ -93,23 +93,16 @@ def test_numerical_feature_config_is_cyclic():
 
 def test_numerical_feature_config_regularization():
     """Tests that regularization parameters are properly set in NumericalFeature."""
+    from pytorch_lattice.layers import LaplacianRegularizer
+
     data = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+    reg = LaplacianRegularizer(l1=1.0, l2=0.5)
     feature = NumericalFeature(
         "test",
         data,
-        laplacian_l1=1.0,
-        laplacian_l2=0.5,
-        hessian_l1=0.1,
-        hessian_l2=0.2,
-        wrinkle_l1=0.3,
-        wrinkle_l2=0.4,
+        regularizers=[reg],
     )
-    assert feature.laplacian_l1 == 1.0
-    assert feature.laplacian_l2 == 0.5
-    assert feature.hessian_l1 == 0.1
-    assert feature.hessian_l2 == 0.2
-    assert feature.wrinkle_l1 == 0.3
-    assert feature.wrinkle_l2 == 0.4
+    assert feature.regularizers == [reg]
 
 
 @pytest.mark.parametrize(
@@ -144,3 +137,16 @@ def test_categorical_feature_config_initialization(
     assert feature.monotonicity_pairs == monotonicity_pairs
     assert feature.category_indices == expected_category_indices
     assert feature.monotonicity_index_pairs == expected_monotonicity_index_pairs
+
+
+def test_categorical_feature_config_regularization():
+    """Tests that regularization parameters are properly set in CategoricalFeature."""
+    from pytorch_lattice.layers import L1L2Regularizer
+
+    reg = L1L2Regularizer(l1=1.0, l2=0.5)
+    feature = CategoricalFeature(
+        "test",
+        categories=["a", "b"],
+        regularizers=[reg],
+    )
+    assert feature.regularizers == [reg]

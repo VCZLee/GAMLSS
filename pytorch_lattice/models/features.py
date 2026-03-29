@@ -8,6 +8,7 @@ import logging
 from typing import Optional, Union
 
 import numpy as np
+import torch
 
 from ..enums import InputKeypointsInit, Monotonicity
 
@@ -32,12 +33,7 @@ class NumericalFeature:
         monotonicity: Optional[Monotonicity] = None,
         is_cyclic: bool = False,
         projection_iterations: int = 8,
-        laplacian_l1: float = 0.0,
-        laplacian_l2: float = 0.0,
-        hessian_l1: float = 0.0,
-        hessian_l2: float = 0.0,
-        wrinkle_l1: float = 0.0,
-        wrinkle_l2: float = 0.0,
+        regularizers: Optional[list[torch.nn.Module]] = None,
     ) -> None:
         """Initializes a `NumericalFeatureConfig` instance.
 
@@ -58,12 +54,7 @@ class NumericalFeature:
                 the output for the first keypoint.
             projection_iterations: Number of times to run Dykstra's projection
                 algorithm when applying constraints.
-            laplacian_l1: L1 regularization amount for the Laplacian regularizer.
-            laplacian_l2: L2 regularization amount for the Laplacian regularizer.
-            hessian_l1: L1 regularization amount for the Hessian regularizer.
-            hessian_l2: L2 regularization amount for the Hessian regularizer.
-            wrinkle_l1: L1 regularization amount for the Wrinkle regularizer.
-            wrinkle_l2: L2 regularization amount for the Wrinkle regularizer.
+            regularizers: A list of regularizers to apply to the calibrator's kernel.
 
         Raises:
             ValueError: If `data` contains NaN values.
@@ -81,12 +72,7 @@ class NumericalFeature:
         self.monotonicity = monotonicity
         self.is_cyclic = is_cyclic
         self.projection_iterations = projection_iterations
-        self.laplacian_l1 = laplacian_l1
-        self.laplacian_l2 = laplacian_l2
-        self.hessian_l1 = hessian_l1
-        self.hessian_l2 = hessian_l2
-        self.wrinkle_l1 = wrinkle_l1
-        self.wrinkle_l2 = wrinkle_l2
+        self.regularizers = regularizers
 
         sorted_unique_values = np.unique(data)
 
@@ -130,6 +116,7 @@ class CategoricalFeature:
         categories: Union[list[int], list[str]],
         missing_input_value: Optional[float] = None,
         monotonicity_pairs: Optional[list[tuple[str, str]]] = None,
+        regularizers: Optional[list[torch.nn.Module]] = None,
     ) -> None:
         """Initializes a `CategoricalFeatureConfig` instance.
 
@@ -144,11 +131,13 @@ class CategoricalFeature:
             monotonicity_pairs: List of pairs of categories `(category_a, category_b)`
                 indicating that the calibrator output for `category_b` should be greater
                 than or equal to that of `category_a`.
+            regularizers: A list of regularizers to apply to the calibrator's kernel.
         """
         self.feature_name = feature_name
         self.categories = categories
         self.missing_input_value = missing_input_value
         self.monotonicity_pairs = monotonicity_pairs
+        self.regularizers = regularizers
 
         self.category_indices = {category: i for i, category in enumerate(categories)}
         self.monotonicity_index_pairs = [
