@@ -56,6 +56,7 @@ class NumericalCalibrator(ConstrainedModule):
         input_keypoints_type: InputKeypointsType = InputKeypointsType.FIXED,
         laplacian_l1: float = 0.0,
         laplacian_l2: float = 0.0,
+        laplacian_regularize_bias: bool = False,
         hessian_l1: float = 0.0,
         hessian_l2: float = 0.0,
         wrinkle_l1: float = 0.0,
@@ -84,6 +85,8 @@ class NumericalCalibrator(ConstrainedModule):
                 `input_keypoints` for initialization but adapt during training.
             laplacian_l1: L1 regularization amount for the Laplacian regularizer.
             laplacian_l2: L2 regularization amount for the Laplacian regularizer.
+            laplacian_regularize_bias: Whether to also apply the Laplacian penalty to
+                the bias term.
             hessian_l1: L1 regularization amount for the Hessian regularizer.
             hessian_l2: L2 regularization amount for the Hessian regularizer.
             wrinkle_l1: L1 regularization amount for the Wrinkle regularizer.
@@ -110,7 +113,10 @@ class NumericalCalibrator(ConstrainedModule):
         self.laplacian_l1 = laplacian_l1
         self.laplacian_l2 = laplacian_l2
         self.laplacian_regularizer = LaplacianRegularizer(
-            l1=laplacian_l1, l2=laplacian_l2, is_cyclic=is_cyclic
+            l1=laplacian_l1,
+            l2=laplacian_l2,
+            is_cyclic=is_cyclic,
+            regularize_bias=laplacian_regularize_bias,
         )
         self.hessian_l1 = hessian_l1
         self.hessian_l2 = hessian_l2

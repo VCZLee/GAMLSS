@@ -15,7 +15,13 @@ class LaplacianRegularizer(nn.Module):
     where `delta` is the segment heights of the PWL calibrator.
     """
 
-    def __init__(self, l1: float = 0.0, l2: float = 0.0, is_cyclic: bool = False):
+    def __init__(
+        self,
+        l1: float = 0.0,
+        l2: float = 0.0,
+        is_cyclic: bool = False,
+        regularize_bias: bool = False,
+    ):
         """Initializes an instance of `LaplacianRegularizer`.
 
         Args:
@@ -23,11 +29,15 @@ class LaplacianRegularizer(nn.Module):
             l2: l2 regularization amount.
             is_cyclic: Whether the first and last keypoints should take the same
                 output value.
+            regularize_bias: Whether to also apply the regularization penalty to
+                the bias term (the first weight). Useful for pushing the entire
+                function towards a flat line at 0.
         """
         super().__init__()
         self.l1 = l1
         self.l2 = l2
         self.is_cyclic = is_cyclic
+        self.regularize_bias = regularize_bias
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Returns regularization loss.
@@ -48,6 +58,14 @@ class LaplacianRegularizer(nn.Module):
             heights = torch.cat([heights, last_height], dim=0)
 
         loss = torch.tensor(0.0, dtype=x.dtype, device=x.device)
+
+        if self.regularize_bias:
+            bias = x[0:1]
+            if self.l1:
+                loss = loss + self.l1 * torch.sum(torch.abs(bias))
+            if self.l2:
+                loss = loss + self.l2 * torch.sum(torch.square(bias))
+
         if self.l1:
             loss = loss + self.l1 * torch.sum(torch.abs(heights))
         if self.l2:

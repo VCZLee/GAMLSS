@@ -39,6 +39,34 @@ def test_laplacian_regularizer():
     # Total = 1.4 + 0.66 = 2.06
     assert torch.allclose(reg(x), torch.tensor(2.06).double())
 
+    # l1 only + regularize_bias
+    reg = LaplacianRegularizer(l1=1.0, l2=0.0, regularize_bias=True)
+    # heights = [0.5, 0.2, -0.1] -> loss = 0.8
+    # bias = [1.0] -> loss = 1.0
+    # Total = 1.8
+    assert torch.allclose(reg(x), torch.tensor(1.8).double())
+
+    # l2 only + regularize_bias
+    reg = LaplacianRegularizer(l1=0.0, l2=1.0, regularize_bias=True)
+    # heights L2 = 0.3
+    # bias L2 = 1.0
+    # Total = 1.3
+    assert torch.allclose(reg(x), torch.tensor(1.3).double())
+
+    # l1 + l2 + regularize_bias
+    reg = LaplacianRegularizer(l1=1.0, l2=1.0, regularize_bias=True)
+    # heights L1 + L2 = 0.8 + 0.3 = 1.1
+    # bias L1 + L2 = 1.0 + 1.0 = 2.0
+    # Total = 3.1
+    assert torch.allclose(reg(x), torch.tensor(3.1).double())
+
+    # l1 + l2 + is_cyclic + regularize_bias
+    reg = LaplacianRegularizer(l1=1.0, l2=1.0, is_cyclic=True, regularize_bias=True)
+    # heights L1 + L2 (cyclic) = 1.4 + 0.66 = 2.06
+    # bias L1 + L2 = 1.0 + 1.0 = 2.0
+    # Total = 2.06 + 2.0 = 4.06
+    assert torch.allclose(reg(x), torch.tensor(4.06).double())
+
 
 def test_hessian_regularizer():
     """Tests HessianRegularizer."""
